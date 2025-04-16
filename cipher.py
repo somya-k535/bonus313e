@@ -26,16 +26,27 @@ def rail_fence_encode(string, key):
         rail fence algorithm
     """
     grid = [["" for _ in range(len(string))] for _ in range(key)]
-    direction = 1
-    row = 0
 
-    for col in range(len(string)):
-        grid[row][col] = string[col]
-        row += direction
-        if row == 0 or row == key - 1:
-            direction *= -1
+    i = 0
+    down = True
+    for j, char in enumerate(string):
+        grid[i][j] = char
+        if down:
+            i += 1
+            if i == key:
+                i -= 2
+                down = False
+        else:
+            i -= 1
+            if i < 0:
+                i += 2
+                down = True
 
-    return ''.join(''.join(r) for r in grid)
+    encode_string = ""
+    for i in range(key):
+        for j in range(len(string)):
+            encode_string += f"{grid[i][j]}"
+    return encode_string
 
 def rail_fence_decode(string, key):
     """
