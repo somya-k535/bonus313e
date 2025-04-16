@@ -56,32 +56,45 @@ def rail_fence_decode(string, key):
     post: function returns a single string that is decoded with
         rail fence algorithm
     """
-    pattern = [0] * len(string)
-    rail = 0
-    dir_down = 1
+    grid = [["" for _ in range(len(string))] for _ in range(key)]
+    i = 0
+    down = True
+    for j in range(len(string)):
+        grid[i][j] = "X"
+        if down:
+            i += 1
+            if i == key:
+                i -= 2
+                down = False
+        else:
+            i -= 1
+            if i < 0:
+                i += 2
+                down = True
 
-    for i in range(len(string)):
-        pattern[i] = rail
-        rail += dir_down
-        if rail == 0 or rail == key - 1:
-            dir_down *= -1
-
-    counts = [pattern.count(r) for r in range(key)]
-    positions = [0] * key
-    pos = 0
+    index = 0
     for i in range(key):
-        positions[i] = pos
-        pos += counts[i]
+        for j in range(len(string)):
+            if grid[i][j] == "X":
+                grid[i][j] = string[index]
+                index += 1
 
-    output = [''] * len(string)
-    rail_indices = [0] * key
-
-    for i, r in enumerate(pattern):
-        index = positions[r] + rail_indices[r]
-        output[i] = string[index]
-        rail_indices[r] += 1
-
-    return ''.join(output)
+    decode_string = ""
+    i = 0
+    down = True
+    for j in range(len(string)):
+        decode_string += f"{grid[i][j]}"
+        if down:
+            i += 1
+            if i == key:
+                i -= 2
+                down = False
+        else:
+            i -= 1
+            if i < 0:
+                i += 2
+                down = True
+    return decode_string
 
 
 def filter_string(string):
