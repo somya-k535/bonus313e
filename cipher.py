@@ -26,27 +26,16 @@ def rail_fence_encode(string, key):
         rail fence algorithm
     """
     grid = [["" for _ in range(len(string))] for _ in range(key)]
+    direction = 1
+    row = 0
 
-    i = 0
-    down = True
-    for j, char in enumerate(string):
-        grid[i][j] = char
-        if down:
-            i += 1
-            if i == key:
-                i -= 2
-                down = False
-        else:
-            i -= 1
-            if i < 0:
-                i += 2
-                down = True
+    for col in range(len(string)):
+        grid[row][col] = string[col]
+        row += direction
+        if row == 0 or row == key - 1:
+            direction *= -1
 
-    encode_string = ""
-    for i in range(key):
-        for j in range(len(string)):
-            encode_string += f"{grid[i][j]}"
-    return encode_string
+    return ''.join(''.join(r) for r in grid)
 
 def rail_fence_decode(string, key):
     """
@@ -56,46 +45,32 @@ def rail_fence_decode(string, key):
     post: function returns a single string that is decoded with
         rail fence algorithm
     """
-    grid = [["" for _ in range(len(string))] for _ in range(key)]
-    i = 0
-    down = True
-    for j in range(len(string)):
-        grid[i][j] = "X"
-        if down:
-            i += 1
-            if i == key:
-                i -= 2
-                down = False
-        else:
-            i -= 1
-            if i < 0:
-                i += 2
-                down = True
+    pattern = [0] * len(string)
+    rail = 0
+    dir_down = 1
 
-    index = 0
+    for i in range(len(string)):
+        pattern[i] = rail
+        rail += dir_down
+        if rail == 0 or rail == key - 1:
+            dir_down *= -1
+
+    counts = [pattern.count(r) for r in range(key)]
+    positions = [0] * key
+    pos = 0
     for i in range(key):
-        for j in range(len(string)):
-            if grid[i][j] == "X":
-                grid[i][j] = string[index]
-                index += 1
+        positions[i] = pos
+        pos += counts[i]
 
-    decode_string = ""
-    i = 0
-    down = True
-    for j in range(len(string)):
-        decode_string += f"{grid[i][j]}"
-        if down:
-            i += 1
-            if i == key:
-                i -= 2
-                down = False
-        else:
-            i -= 1
-            if i < 0:
-                i += 2
-                down = True
-    return decode_string
+    output = [''] * len(string)
+    rail_indices = [0] * key
 
+    for i, r in enumerate(pattern):
+        index = positions[r] + rail_indices[r]
+        output[i] = string[index]
+        rail_indices[r] += 1
+
+    return ''.join(output)
 
 def filter_string(string):
     """
@@ -104,11 +79,12 @@ def filter_string(string):
         removes all digits, punctuation marks, and spaces. It
         returns a single string with only lower case characters
     """
-    cleaned = []
-    for char in string.lower():
-        if 'a' <= char <= 'z':
-            cleaned.append(char)
-    return ''.join(cleaned)
+   string = string.lower()
+    filtered_string = ""
+    for char in string:
+        if char.isalpha():
+            filtered_string += char
+    return filtered_string
 
 def encode_character(p, s):
     """
