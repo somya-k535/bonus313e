@@ -93,11 +93,12 @@ def encode_character(p, s):
     post: function returns a single character encoded using the
         Vigenere algorithm. You may not use a 2-D list
     """
-    shift = ord(p) - ord('a')
-    total = ord(s) + shift
-    if total > ord('z'):
-        total -= 26
-    return chr(total)
+    shift = ord(p) - 97
+    new = ord(s) + shift
+    if new > 122:
+        overflow = new - 122
+        new = overflow + 96
+    return chr(new)
 def decode_character(p, s):
     """
     pre: p is a character in the pass phrase and s is a character
