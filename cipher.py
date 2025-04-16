@@ -72,6 +72,7 @@ def rail_fence_decode(string, key):
 
     return ''.join(output)
 
+
 def filter_string(string):
     """
     pre: string is a string of characters
@@ -79,12 +80,11 @@ def filter_string(string):
         removes all digits, punctuation marks, and spaces. It
         returns a single string with only lower case characters
     """
-   string = string.lower()
-    filtered_string = ""
-    for char in string:
-        if char.isalpha():
-            filtered_string += char
-    return filtered_string
+    cleaned = []
+    for char in string.lower():
+        if 'a' <= char <= 'z':
+            cleaned.append(char)
+    return ''.join(cleaned)
 
 def encode_character(p, s):
     """
